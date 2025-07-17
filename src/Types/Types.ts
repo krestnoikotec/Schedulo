@@ -5,4 +5,5 @@ export type Task = {
     dateEnd: string;
     done: boolean;
     dueDate: string;
+    id: string;
 }

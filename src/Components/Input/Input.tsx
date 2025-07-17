@@ -1,7 +1,9 @@
+import React from "react";
+
 type InputProps = {
     type: string;
     placeholder?: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     name: string;

@@ -19,7 +19,7 @@ const TaskElement = ({task, deleteTask, toggleComplete}: TaskProps) => {
                 <input
                     type="checkbox"
                     checked={task.done}
-                    onChange={() => toggleComplete(task.title)}
+                    onChange={() => toggleComplete(task.id)}
                 />
                 {task.done && (
                     <p>Task has been completed at {task.dueDate}</p>
@@ -27,7 +27,7 @@ const TaskElement = ({task, deleteTask, toggleComplete}: TaskProps) => {
             <div>
                 <p>{task.description}</p>
             </div>
-            <button onClick={() => deleteTask(task.title)}>Delete Task</button>
+            <button onClick={() => deleteTask(task.id)}>Delete Task</button>
         </div>
     );
 };

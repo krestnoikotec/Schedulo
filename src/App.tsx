@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import './App.css'
 import TaskElement from "./Components/Task/TaskElement"
 import Input from "./Components/Input/Input"
@@ -6,12 +6,13 @@ import { Task } from "./Types/Types"
 
 function App() {
     const [tasks, setTasks] = useState<Task[]>([])
-    const [taskForm, setTaskForm] = useState<Omit<Task, 'done' | 'dueDate'>>({
+    const [taskForm, setTaskForm] = useState<Omit<Task, 'done' | 'dueDate' | 'id'>>({
       title: '',
       description: '',
       dateStart: '',
       dateEnd: ''
     })
+    const [sortedTasks, setSortedTasks] = useState<Task[]>([]);
 
     const handleChange = (e: React.ChangeEvent<HTMLFormElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
@@ -20,8 +21,10 @@ function App() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const id = crypto.randomUUID();
         const newTask: Task = {
             ...taskForm,
+            id: id,
             done: false,
             dueDate: '',
         };
@@ -34,17 +37,22 @@ function App() {
         });
     }
 
-    const toggleCompleteTask = (title: string) => {
+    const toggleCompleteTask = (id: string) => {
         setTasks(prevTasks =>
             prevTasks.map(task =>
-                task.title === title ? {...task, done: !task.done, dueDate: new Date().toISOString()} : task
+                task.id === id ? {...task, done: !task.done, dueDate: new Date().toISOString()} : task
             )
         )
     }
 
-    const deleteTask = (title: string) => {
-        setTasks(tasks.filter((task) => task.title !== title))
+    const deleteTask = (id: string) => {
+        setTasks(tasks.filter((task) => task.id !== id))
     }
+
+    const parseDate = (date: string) => {
+        const [day, month, year] = date.split('-').map(Number);
+        return new Date(year, month-1, day);
+    };
 
     return (
         <div>
@@ -65,9 +73,11 @@ function App() {
                     Add Task
                 </button>
             </form>
-            {tasks.map((task: Task, index: number) => (
+            {[...tasks]
+            .sort((a, b) => parseDate(a.dateStart).getTime() - parseDate(b.dateStart).getTime())
+            .map((task: Task, index: number) => (
                 <TaskElement
-                    key={index}
+                    key={task.id}
                     task={task}
                     deleteTask={deleteTask}
                     toggleComplete={toggleCompleteTask}
