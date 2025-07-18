@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "vscode-icons-team.vscode-icons",
+        "esbenp.prettier-vscode",
+        "christian-kohler.path-intellisense",
+        "visualstudioexptteam.intellicode-api-usage-examples",
+        "visualstudioexptteam.vscodeintellicode",
+        "oderwat.indent-rainbow",
+        "dsznajder.es7-react-js-snippets",
+        "steoates.autoimport"
+    ]
+}
