@@ -1,17 +1,16 @@
-import React from 'react'
+import React from "react";
 
 type InputProps = {
-  type: string
-  placeholder?: string
-  children?: React.ReactNode
-  value: string
+  type: string;
+  placeholder?: string;
+  children?: React.ReactNode;
+  value: string;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  name: string
-  max?: string
-  min?: string
-}
+  ) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  name: string;
+};
 
 const Input = ({
   type,
@@ -19,9 +18,8 @@ const Input = ({
   value,
   children,
   onChange,
+  onKeyDown,
   name,
-  min,
-  max,
 }: InputProps) => {
   return (
     <div>
@@ -33,12 +31,11 @@ const Input = ({
           placeholder={placeholder}
           name={name}
           onChange={onChange}
-          max={max}
-          min={min}
+          onKeyDown={onKeyDown}
         />
       </label>
     </div>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;
