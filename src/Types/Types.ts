@@ -48,3 +48,8 @@ export type InputProps = {
   name: string;
   children?: React.ReactNode;
 };
+
+export type ButtonProps = {
+  children: React.ReactNode;
+  type?: "submit" | "reset" | "button";
+};

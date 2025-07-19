@@ -1,9 +1,10 @@
 import React from "react";
-import Input from "@/Components/Input/Input";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AddTaskProps } from "@/Types/Types";
 import styles from "./addTaskComponent.module.scss";
+import Input from "@/Components/Input/Input";
+import Button from "@/Components/Button/Button";
 
 const AddTaskComponent = ({
   handleSubmit,
@@ -81,7 +82,7 @@ const AddTaskComponent = ({
           />
         </div>
       </LocalizationProvider>
-      <button type="submit">Add Task</button>
+      <Button type="submit">Add Task</Button>
     </form>
   );
 };
