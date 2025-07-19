@@ -1,39 +1,30 @@
 import React from "react";
-
-type InputProps = {
-  type: string;
-  placeholder?: string;
-  children?: React.ReactNode;
-  value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  name: string;
-};
+import { InputProps } from "@/Types/Types";
+import styles from "./input.module.scss";
 
 const Input = ({
   type,
   placeholder,
   value,
-  children,
   onChange,
   onKeyDown,
   name,
+  children,
 }: InputProps) => {
   return (
-    <div>
-      <label>
+    <div className={styles.inputContainer}>
+      <label htmlFor={name} className={styles.inputLabel}>
         {children}
-        <input
-          value={value}
-          type={type}
-          placeholder={placeholder}
-          name={name}
-          onChange={onChange}
-          onKeyDown={onKeyDown}
-        />
       </label>
+      <input
+        value={value}
+        type={type}
+        placeholder={placeholder}
+        name={name}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        className={styles.input}
+      />
     </div>
   );
 };

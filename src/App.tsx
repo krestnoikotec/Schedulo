@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import TaskElement from "./Components/Task/TaskElement";
-import Input from "./Components/Input/Input";
 import { Task } from "./Types/Types";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DayPicker } from "react-day-picker";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import { View } from "react-big-calendar";
+import CalendarComponent from "@/Components/CalendarComponent/CalendarComponent";
+import DayPickerComponent from "@/Components/DayPickerComponent/DayPickerComponent";
+import AddTaskComponent from "@/Components/AddTaskComponent/AddTaskComponent";
 
 function App() {
-  const localizer = momentLocalizer(moment);
-
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [selected, setSelected] = useState<Date>(new Date());
+  const [calendarView, setCalendarView] = useState<View>("month");
   const [taskForm, setTaskForm] = useState<
     Omit<Task, "done" | "dueDate" | "id">
   >({
@@ -22,27 +19,6 @@ function App() {
     dateStart: "",
     dateEnd: "",
   });
-  const [sortedTasks, setSortedTasks] = useState<Task[]>([]);
-  const [selected, setSelected] = useState<Date>();
-
-  useEffect(() => {}, []);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setTaskForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleDateChange = (
-    value: Date | null,
-    field: "dateStart" | "dateEnd",
-  ) => {
-    setTaskForm((prev) => ({
-      ...prev,
-      [field]: value ? value.toISOString() : "",
-    }));
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,74 +57,25 @@ function App() {
     return new Date(year, month - 1, day);
   };
 
-  const handleKeyEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const form = e.currentTarget.form;
-      if (form) {
-        form.requestSubmit();
-      }
-    }
+  const handleDate = (date: Date) => {
+    setSelected(date);
+    setCalendarView("day");
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <Input
-          type={"text"}
-          placeholder={"Task Name"}
-          name={"title"}
-          onChange={handleChange}
-          value={taskForm.title}
-          onKeyDown={handleKeyEnter}
-        >
-          Task Name:
-        </Input>
-        <Input
-          type={"text"}
-          placeholder={"Task Description"}
-          name={"description"}
-          onChange={handleChange}
-          value={taskForm.description}
-          onKeyDown={handleKeyEnter}
-        >
-          Task Description:
-        </Input>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <div>
-            <DateTimePicker
-              label="Start Date:"
-              value={taskForm.dateStart ? new Date(taskForm.dateStart) : null}
-              onChange={(newValue) => handleDateChange(newValue, "dateStart")}
-              maxDateTime={
-                taskForm.dateEnd ? new Date(taskForm.dateEnd) : undefined
-              }
-            />
-            <DateTimePicker
-              label="End Date:"
-              value={taskForm.dateEnd ? new Date(taskForm.dateEnd) : null}
-              onChange={(newValue) => handleDateChange(newValue, "dateEnd")}
-              minDateTime={
-                taskForm.dateStart ? new Date(taskForm.dateStart) : undefined
-              }
-            />
-          </div>
-        </LocalizationProvider>
-        <button type="submit">Add Task</button>
-      </form>
-      <DayPicker
-        animate
-        mode={"single"}
-        selected={selected}
-        onSelect={setSelected}
-        footer={selected ? `Select ${selected.toISOString()}` : "Pick a day"}
+      <AddTaskComponent
+        handleSubmit={handleSubmit}
+        taskForm={taskForm}
+        setTaskForm={setTaskForm}
       />
+      <DayPickerComponent selected={selected} onDayClick={handleDate} />
       {[...tasks]
         .sort(
           (a, b) =>
             parseDate(a.dateStart).getTime() - parseDate(b.dateStart).getTime(),
         )
-        .map((task: Task, index: number) => (
+        .map((task: Task) => (
           <TaskElement
             key={task.id}
             task={task}
@@ -157,17 +84,12 @@ function App() {
           ></TaskElement>
         ))}
 
-      <Calendar
-        localizer={localizer}
-        events={tasks.map((task) => ({
-          ...task,
-          start: new Date(task.dateStart),
-          end: new Date(task.dateEnd),
-          title: task.title,
-        }))}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500, margin: "50px" }}
+      <CalendarComponent
+        events={tasks}
+        setCalendarView={setCalendarView}
+        calendarView={calendarView}
+        selected={selected}
+        setSelected={setSelected}
       />
     </div>
   );
