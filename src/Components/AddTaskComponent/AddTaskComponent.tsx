@@ -1,31 +1,35 @@
 import React from "react";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { AddTaskProps } from "@/Types/Types";
+import { AddTaskProps, FormValues } from "@/Types/Types";
+import { Controller, useForm } from "react-hook-form";
 import styles from "./addTaskComponent.module.scss";
 import Input from "@/Components/Input/Input";
 import Button from "@/Components/Button/Button";
 
-const AddTaskComponent = ({
-  handleSubmit,
-  setTaskForm,
-  taskForm,
-}: AddTaskProps) => {
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setTaskForm((prev) => ({ ...prev, [name]: value }));
-  };
+const AddTaskComponent = ({ onSubmit }: AddTaskProps) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      title: "",
+      description: "",
+      dateStart: "",
+      dateEnd: "",
+    },
+  });
 
-  const handleDateChange = (
-    value: Date | null,
-    field: "dateStart" | "dateEnd",
-  ) => {
-    setTaskForm((prev) => ({
-      ...prev,
-      [field]: value ? value.toISOString() : "",
-    }));
+  const watchDateStart = watch("dateStart");
+  const watchDateEnd = watch("dateEnd");
+
+  const handleFormSubmit = (data: FormValues) => {
+    onSubmit(data);
+    reset();
   };
 
   const handleKeyEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -39,47 +43,91 @@ const AddTaskComponent = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.inputForm}>
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className={styles.inputForm}
+    >
       <Input
         type={"text"}
         placeholder={"Enter Name..."}
-        name={"title"}
-        onChange={handleChange}
-        value={taskForm.title}
-        onKeyDown={handleKeyEnter}
+        {...register("title", {
+          required: "Title is required",
+          minLength: {
+            value: 3,
+            message: "Title must be at least 3 characters",
+          },
+        })}
+        name="title"
       >
         Task Name:
       </Input>
+      {errors.title && (
+        <p className={styles.errorMessage}>{errors.title.message}</p>
+      )}
       <Input
         type={"text"}
         placeholder={"Enter Description..."}
+        {...register("description")}
         name={"description"}
-        onChange={handleChange}
-        value={taskForm.description}
-        onKeyDown={handleKeyEnter}
       >
         Task Description:
       </Input>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <div>
-          <DateTimePicker
-            label="Start Date:"
-            value={taskForm.dateStart ? new Date(taskForm.dateStart) : null}
-            onChange={(newValue) => handleDateChange(newValue, "dateStart")}
-            maxDateTime={
-              taskForm.dateEnd ? new Date(taskForm.dateEnd) : undefined
-            }
-            ampm={false}
-          />
-          <DateTimePicker
-            label="End Date:"
-            value={taskForm.dateEnd ? new Date(taskForm.dateEnd) : null}
-            onChange={(newValue) => handleDateChange(newValue, "dateEnd")}
-            minDateTime={
-              taskForm.dateStart ? new Date(taskForm.dateStart) : undefined
-            }
-            ampm={false}
-          />
+          <div>
+            <Controller
+              name="dateStart"
+              control={control}
+              rules={{ required: "Start date is required" }}
+              render={({ field }) => (
+                <DateTimePicker
+                  slotProps={{
+                    textField: {
+                      className: styles.dateInput,
+                    },
+                    popper: {
+                      className: styles.datePopper,
+                    },
+                  }}
+                  label="Start Date:"
+                  value={field.value ? new Date(field.value) : null}
+                  onChange={(date) =>
+                    field.onChange(date ? date.toISOString() : "")
+                  }
+                  maxDateTime={
+                    watchDateEnd ? new Date(watchDateEnd) : undefined
+                  }
+                  ampm={false}
+                />
+              )}
+            />
+            {errors.dateStart && (
+              <p className={styles.errorMesage}>{errors.dateStart.message}</p>
+            )}
+          </div>
+          <div>
+            <Controller
+              name="dateEnd"
+              control={control}
+              rules={{ required: "End date is required" }}
+              render={({ field }) => (
+                <DateTimePicker
+                  label="End Date:"
+                  value={field.value ? new Date(field.value) : null}
+                  onChange={(date) =>
+                    field.onChange(date ? date.toISOString() : "")
+                  }
+                  minDateTime={
+                    watchDateStart ? new Date(watchDateStart) : undefined
+                  }
+                  ampm={false}
+                />
+              )}
+            />
+            {errors.dateEnd && (
+              <p className={styles.errorMesage}>{errors.dateEnd.message}</p>
+            )}
+          </div>
         </div>
       </LocalizationProvider>
       <Button type="submit">Add Task</Button>

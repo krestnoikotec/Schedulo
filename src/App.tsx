@@ -11,32 +11,6 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selected, setSelected] = useState<Date>(new Date());
   const [calendarView, setCalendarView] = useState<View>("month");
-  const [taskForm, setTaskForm] = useState<
-    Omit<Task, "done" | "dueDate" | "id">
-  >({
-    title: "",
-    description: "",
-    dateStart: "",
-    dateEnd: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const id = crypto.randomUUID();
-    const newTask: Task = {
-      ...taskForm,
-      id: id,
-      done: false,
-      dueDate: "",
-    };
-    setTasks((prev) => [...prev, newTask]);
-    setTaskForm({
-      title: "",
-      description: "",
-      dateStart: "",
-      dateEnd: "",
-    });
-  };
 
   const toggleCompleteTask = (id: string) => {
     setTasks((prevTasks) =>
@@ -64,33 +38,45 @@ function App() {
 
   return (
     <div>
-      <AddTaskComponent
-        handleSubmit={handleSubmit}
-        taskForm={taskForm}
-        setTaskForm={setTaskForm}
-      />
-      <DayPickerComponent selected={selected} onDayClick={handleDate} />
-      {[...tasks]
-        .sort(
-          (a, b) =>
-            parseDate(a.dateStart).getTime() - parseDate(b.dateStart).getTime(),
-        )
-        .map((task: Task) => (
-          <TaskElement
-            key={task.id}
-            task={task}
-            deleteTask={deleteTask}
-            toggleComplete={toggleCompleteTask}
-          ></TaskElement>
-        ))}
+      <aside>
+        <AddTaskComponent
+          onSubmit={(formData) => {
+            const id = crypto.randomUUID();
+            const newTask: Task = {
+              ...formData,
+              id,
+              done: false,
+              dueDate: "",
+            };
+            setTasks((prevTasks) => [...prevTasks, newTask]);
+          }}
+        />
+        <DayPickerComponent selected={selected} onDayClick={handleDate} />
+      </aside>
+      <section>
+        {[...tasks]
+          .sort(
+            (a, b) =>
+              parseDate(a.dateStart).getTime() -
+              parseDate(b.dateStart).getTime(),
+          )
+          .map((task: Task) => (
+            <TaskElement
+              key={task.id}
+              task={task}
+              deleteTask={deleteTask}
+              toggleComplete={toggleCompleteTask}
+            ></TaskElement>
+          ))}
 
-      <CalendarComponent
-        events={tasks}
-        setCalendarView={setCalendarView}
-        calendarView={calendarView}
-        selected={selected}
-        setSelected={setSelected}
-      />
+        <CalendarComponent
+          events={tasks}
+          setCalendarView={setCalendarView}
+          calendarView={calendarView}
+          selected={selected}
+          setSelected={setSelected}
+        />
+      </section>
     </div>
   );
 }

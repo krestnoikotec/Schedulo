@@ -10,6 +10,7 @@ const Input = ({
   onKeyDown,
   name,
   children,
+  ...rest
 }: InputProps) => {
   return (
     <div className={styles.inputContainer}>
@@ -24,6 +25,7 @@ const Input = ({
         onChange={onChange}
         onKeyDown={onKeyDown}
         className={styles.input}
+        {...rest}
       />
     </div>
   );

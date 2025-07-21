@@ -29,19 +29,17 @@ export type DayPickerProps = {
   onDayClick: (date: Date) => void;
 };
 
+export type FormValues = Omit<Task, "done" | "dueDate" | "id">;
+
 export type AddTaskProps = {
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  taskForm: Omit<Task, "done" | "dueDate" | "id">;
-  setTaskForm: React.Dispatch<
-    React.SetStateAction<Omit<Task, "done" | "dueDate" | "id">>
-  >;
+  onSubmit: (data: FormValues) => void;
 };
 
 export type InputProps = {
   type: string;
   placeholder?: string;
-  value: string;
-  onChange: (
+  value?: string;
+  onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;

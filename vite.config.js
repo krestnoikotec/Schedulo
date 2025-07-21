@@ -13,4 +13,10 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
+  build: {
+    commonjsOptions: {
+      minify: false,
+      transformMixedEsModules: true,
+    },
+  },
 });
