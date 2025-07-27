@@ -9,6 +9,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CalendarEvents, CalendarProps } from "@/Types/Types";
 import "moment/locale/uk";
+import styles from "./calendarComponent.module.scss";
 
 const mLocalizer: DateLocalizer = momentLocalizer(moment);
 moment.locale("uk");
@@ -27,8 +28,34 @@ const CalendarComponent = ({
   selected,
   setSelected,
 }: CalendarProps) => {
+  const getPriorityStyle = (priority: number) => {
+    switch (priority) {
+      case 0:
+        return {
+          style: {
+            backgroundColor: "#ff4d4f",
+          },
+        };
+      case 1:
+        return {
+          style: {
+            backgroundColor: "#faad14",
+          },
+        };
+      case 2:
+        return {
+          style: {
+            backgroundColor: "#52c41a",
+          },
+        };
+      default:
+        return { style: {} };
+    }
+  };
+
   return (
     <Calendar
+      className={styles.calendar}
       localizer={mLocalizer}
       events={events.map(
         (task): CalendarEvents => ({
@@ -43,11 +70,11 @@ const CalendarComponent = ({
       views={["month", "week", "day", "agenda"]}
       startAccessor="start"
       endAccessor="end"
-      style={{ height: 700, width: 800, margin: "10px" }}
       defaultView={Views.MONTH}
       date={selected || new Date()}
       onNavigate={(date) => setSelected(date)}
       formats={formats}
+      eventPropGetter={(event) => getPriorityStyle(event.priority)}
     />
   );
 };

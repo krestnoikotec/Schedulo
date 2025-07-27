@@ -9,6 +9,7 @@ export type Task = {
   done: boolean;
   dueDate: string;
   id: string;
+  priority: number;
 };
 
 export type CalendarEvents = Task & {
@@ -50,4 +51,9 @@ export type InputProps = {
 export type ButtonProps = {
   children: React.ReactNode;
   type?: "submit" | "reset" | "button";
+};
+
+export type TaskPriorityProps = {
+  value: number;
+  onChange: (value: number) => void;
 };

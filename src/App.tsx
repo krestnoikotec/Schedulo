@@ -6,6 +6,7 @@ import { View } from "react-big-calendar";
 import CalendarComponent from "@/Components/CalendarComponent/CalendarComponent";
 import DayPickerComponent from "@/Components/DayPickerComponent/DayPickerComponent";
 import AddTaskComponent from "@/Components/AddTaskComponent/AddTaskComponent";
+import User from "@/Components/User/User";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -37,46 +38,36 @@ function App() {
   };
 
   return (
-    <div>
-      <aside>
-        <AddTaskComponent
-          onSubmit={(formData) => {
-            const id = crypto.randomUUID();
-            const newTask: Task = {
-              ...formData,
-              id,
-              done: false,
-              dueDate: "",
-            };
-            setTasks((prevTasks) => [...prevTasks, newTask]);
-          }}
-        />
-        <DayPickerComponent selected={selected} onDayClick={handleDate} />
-      </aside>
-      <section>
-        {[...tasks]
-          .sort(
-            (a, b) =>
-              parseDate(a.dateStart).getTime() -
-              parseDate(b.dateStart).getTime(),
-          )
-          .map((task: Task) => (
-            <TaskElement
-              key={task.id}
-              task={task}
-              deleteTask={deleteTask}
-              toggleComplete={toggleCompleteTask}
-            ></TaskElement>
-          ))}
-
-        <CalendarComponent
-          events={tasks}
-          setCalendarView={setCalendarView}
-          calendarView={calendarView}
-          selected={selected}
-          setSelected={setSelected}
-        />
-      </section>
+    <div className="calendar_container">
+      <header>
+        <User></User>
+      </header>
+      <div className="calendar_main-section">
+        <aside className="calendar-aside">
+          <AddTaskComponent
+            onSubmit={(formData) => {
+              const id = crypto.randomUUID();
+              const newTask: Task = {
+                ...formData,
+                id,
+                done: false,
+                dueDate: "",
+              };
+              setTasks((prevTasks) => [...prevTasks, newTask]);
+            }}
+          />
+          <DayPickerComponent selected={selected} onDayClick={handleDate} />
+        </aside>
+        <section className="calendar">
+          <CalendarComponent
+            events={tasks}
+            setCalendarView={setCalendarView}
+            calendarView={calendarView}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        </section>
+      </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import styles from "./addTaskComponent.module.scss";
 import Input from "@/Components/Input/Input";
 import Button from "@/Components/Button/Button";
+import TaskPriority from "@/Components/TaskPriority/TaskPriority";
 
 const AddTaskComponent = ({ onSubmit }: AddTaskProps) => {
   const {
@@ -21,6 +22,7 @@ const AddTaskComponent = ({ onSubmit }: AddTaskProps) => {
       description: "",
       dateStart: "",
       dateEnd: "",
+      priority: 0,
     },
   });
 
@@ -130,6 +132,13 @@ const AddTaskComponent = ({ onSubmit }: AddTaskProps) => {
           </div>
         </div>
       </LocalizationProvider>
+      <Controller
+        name="priority"
+        control={control}
+        render={({ field }) => (
+          <TaskPriority value={field.value} onChange={field.onChange} />
+        )}
+      />
       <Button type="submit">Add Task</Button>
     </form>
   );
